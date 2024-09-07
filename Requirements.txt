@@ -1,6 +1,6 @@
 # Rebuild trigger
 streamlit
-matplotlib
+matplotlib==3.7.1
 yfinance
 pandas
 numpy
