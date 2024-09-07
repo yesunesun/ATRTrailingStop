@@ -1,3 +1,4 @@
+# Rebuild trigger
 streamlit
 matplotlib
 yfinance
