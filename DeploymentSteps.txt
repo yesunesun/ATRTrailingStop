@@ -1,0 +1,18 @@
+# Clone repo, build and run the container
+git clone https://github.com/yesunesun/ATRTrailingStop.git
+docker build -t atr_trailing_stop:latest .  
+docker run -p 8501:8501 atr_trailing_stop:latest
+
+# Force overwrite
+git fetch origin
+git reset --hard origin/your-branch-name
+
+
+# Add new file
+git add requirements.txt
+git commit -m "Add requirements.txt"
+git pull
+
+#Remove local file and overwrite it
+rm requirements.txt
+git pull
