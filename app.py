@@ -74,7 +74,14 @@ def plot_atr_trailing_stop(data, symbol, atr_period, atr_multiplier):
     return fig
 
 # Streamlit app
-st.title('ATR Trailing Stop Chart')
+import streamlit as st
+
+# Set the page title
+st.set_page_config(page_title="ATR Trailing Stop Calculator", page_icon="📊")
+
+# Your app content
+st.title("ATR Trailing Stop Calculator")
+st.write("Welcome to the ATR Trailing Stop calculator app.")
 
 # User inputs
 symbol = st.text_input('Enter stock symbol (e.g., AAPL):', 'AAPL')
@@ -111,29 +118,69 @@ st.sidebar.info('This app generates an ATR Trailing Stop chart for a given stock
                 'The chart shows the close price and the calculated trailing stop.')
 
 st.sidebar.header('ATR Trailing Stop Calculation')
+
+import streamlit as st
+
 st.sidebar.markdown('''
-The ATR Trailing Stop is calculated using the following steps:
+**How the ATR Trailing Stop is Calculated:**
 
-1. Calculate the Average True Range (ATR):
-   
-   $TR = \max(High - Low, |High - Close_{prev}|, |Low - Close_{prev}|)$
-   
-   $ATR = \frac{1}{n}\sum_{i=1}^n TR_i$
+1. **Calculate the True Range (TR):**
 
-   where $n$ is the ATR period.
+   - The **True Range (TR)** measures market volatility. It is the greatest of the following:
+     - Current High minus Current Low
+     - Absolute value of the Current High minus the Previous Close
+     - Absolute value of the Current Low minus the Previous Close
 
-2. Calculate the Trailing Stop:
-   
-   For an uptrend:
-   $TrailingStop = Close - (ATR \times Multiplier)$
-   
-   For a downtrend:
-   $TrailingStop = Close + (ATR \times Multiplier)$
+   - Formula for **True Range (TR)**:
+''')
 
-3. Update rules:
-   - In an uptrend, the Trailing Stop is raised when the new calculated stop is higher than the current stop.
-   - In a downtrend, the Trailing Stop is lowered when the new calculated stop is lower than the current stop.
-   - The trend changes when the price crosses the Trailing Stop.
+# True Range formula with abs()
+st.sidebar.latex(r'''
+TR = \max(\text{High} - \text{Low}, \text{abs}(\text{High} - \text{Previous Close}), \text{abs}(\text{Low} - \text{Previous Close}))
+''')
 
-The Trailing Stop provides a dynamic stop-loss that adjusts based on market volatility (measured by ATR) and price movement.
+st.sidebar.markdown('''
+2. **Calculate the Average True Range (ATR):**
+
+   - Once we have the TR, we calculate the **Average True Range (ATR)** as the sum of the True Range (TR) over a number of days divided by the number of days (n):
+''')
+
+# ATR formula
+st.sidebar.latex(r'''
+ATR = \frac{\text{Sum of TR over } n \text{ days}}{n}
+''')
+
+st.sidebar.markdown('''
+   where **n** is the number of days in the chosen period (typically 14 days).
+
+3. **Calculate the Trailing Stop:**
+
+   - When the price is in an **uptrend**, the trailing stop is calculated as:
+''')
+
+# Uptrend Trailing Stop formula
+st.sidebar.latex(r'''
+TrailingStop = \text{Current Price} - (ATR \times \text{Multiplier})
+''')
+
+st.sidebar.markdown('''
+   - When the price is in a **downtrend**, the trailing stop is calculated as:
+''')
+
+# Downtrend Trailing Stop formula
+st.sidebar.latex(r'''
+TrailingStop = \text{Current Price} + (ATR \times \text{Multiplier})
+''')
+
+st.sidebar.markdown('''
+   The **Multiplier** is a factor that adjusts the distance of the stop from the current price, often set between 2 and 3.
+
+4. **Updating the Trailing Stop:**
+
+   - In an **uptrend**, raise the trailing stop when the new stop value is higher than the previous one.
+   - In a **downtrend**, lower the trailing stop when the new stop value is lower than the previous one.
+   - The trend changes (from up to down or vice versa) when the price crosses the Trailing Stop.
+
+**Key Takeaway:**  
+The Trailing Stop adjusts based on market volatility (measured by ATR) and price movement. It acts as a dynamic stop-loss, protecting gains while allowing for market fluctuations.
 ''')
