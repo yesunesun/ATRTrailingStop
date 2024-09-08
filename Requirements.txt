@@ -1,9 +1,6 @@
-# Rebuild trigger
 streamlit
 matplotlib
 yfinance
 pandas
 numpy
 plotly
-
-

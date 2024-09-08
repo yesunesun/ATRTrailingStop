@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "serverless-docker": "^0.0.5"
+  }
+}
