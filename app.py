@@ -42,6 +42,9 @@ def load_data(ticker, start_date, end_date):
     stock_data = yf.download(ticker, start=start_date, end=end_date, interval='1d')
     return stock_data
 
+# Set the page title
+st.set_page_config(page_title="ATR Trailing Stop Calculator", page_icon="📊")
+
 # Streamlit UI
 st.title("ATR Trailing Stop Loss")
 
