@@ -16,3 +16,13 @@ git pull
 #Remove local file and overwrite it
 rm requirements.txt
 git pull
+
+# Stop/delete all running containers
+docker stop $(docker ps -q)
+docker rm $(docker ps -a -q)
+
+docker stop <container_name_or_id>
+docker rm <container_name_or_id>
+
+
+

@@ -1,6 +1,7 @@
 import yfinance as yf
 import pandas as pd
 import streamlit as st
+import altair as alt
 from datetime import datetime, timedelta
 
 # Helper function to get date range based on period selection
@@ -44,6 +45,30 @@ def calculate_market_value_and_performance(prices, initial_investment):
     market_value = (latest_prices / prices.iloc[0]).mean() * initial_investment  # Assuming equal investment in all stocks
     overall_performance = ((market_value - initial_investment) / initial_investment) * 100
     return market_value, overall_performance
+
+# Function to plot the chart using Altair with hover tooltips
+def plot_basket_performance(basket_performance, prices):
+    # Create a DataFrame with performance and date for charting
+    performance_df = basket_performance.reset_index()
+    performance_df['Date'] = pd.to_datetime(performance_df['Date']).dt.date  # Converting to just the date
+    
+    # Melt the DataFrame to have stock symbols as rows instead of columns for better tooltip interaction
+    melted_prices = prices.reset_index()
+    melted_prices['Date'] = pd.to_datetime(melted_prices['Date']).dt.date  # Ensure the date is in the same format
+    melted_prices = melted_prices.melt(id_vars=['Date'], var_name='Symbol', value_name='Price')
+
+    # Combine performance and prices into a single charting data
+    chart_data = pd.merge(melted_prices, performance_df, on='Date', how='inner')
+
+    # Create Altair chart
+    line_chart = alt.Chart(chart_data).mark_line().encode(
+        x='Date:T',
+        y='Basket Performance:Q',
+        color='Symbol:N',
+        tooltip=['Date:T', 'Symbol:N', 'Price:Q', 'Basket Performance:Q']  # Tooltip to show metrics
+    ).interactive()  # Add interaction for hovering
+    
+    return line_chart
 
 # Streamlit app layout
 st.title('Basket Performance')
@@ -123,12 +148,20 @@ if st.sidebar.button('Generate Chart') or 'first_load' not in st.session_state:
         </div>
         """.format(initial_investment, market_value, overall_performance, last_day_performance.mean()), unsafe_allow_html=True)
 
-        # Show performance as line chart
-        st.line_chart(basket_performance)
+        # Use Altair for performance chart with hover metrics
+        performance_chart = plot_basket_performance(basket_performance, prices)
+        st.altair_chart(performance_chart, use_container_width=True)
 
         # Combine prices and overall performance in a single dataframe
+        # First, ensure that all column names in prices and basket_performance are strings
+        prices.columns = prices.columns.map(str)
+        basket_performance.name = 'Basket Performance (%)'  # Ensure the name is a string
+
+        # Concatenate the two DataFrames
         performance_table = pd.concat([prices, basket_performance], axis=1)
-        performance_table.columns = list(prices.columns) + ['Basket Performance (%)']
+
+        # Convert all column names to strings to avoid mixed-type warnings
+        performance_table.columns = performance_table.columns.map(str)
 
         # Show the full data table (date format without time)
         performance_table.index = performance_table.index.date
