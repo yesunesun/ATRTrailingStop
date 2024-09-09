@@ -3,6 +3,7 @@ import pandas as pd
 import json
 from datetime import datetime
 import uuid
+import yfinance as yf
 
 # Initialize session state
 if 'baskets' not in st.session_state:
@@ -23,6 +24,14 @@ def create_basket(name, creation_date, creation_time):
     st.sidebar.success(f"Basket '{name}' created successfully!")
     st.session_state.selected_basket = name
 
+def is_valid_symbol(symbol):
+    try:
+        ticker = yf.Ticker(symbol)
+        info = ticker.info
+        return 'symbol' in info and info['symbol'] == symbol
+    except:
+        return False
+
 def is_valid_add_date(basket, symbol, add_date):
     symbol_history = [s for s in basket['symbols'] if s['symbol'] == symbol]
     for entry in symbol_history:
@@ -37,6 +46,10 @@ def add_symbol(basket_name, symbol, add_date):
     
     if add_date < basket['creation_date']:
         st.error("Symbol add date cannot be before basket creation date.")
+        return
+
+    if not is_valid_symbol(symbol):
+        st.error(f"'{symbol}' is not a valid stock symbol.")
         return
 
     if not is_valid_add_date(basket, symbol, add_date):
