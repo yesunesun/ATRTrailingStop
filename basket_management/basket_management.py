@@ -25,15 +25,16 @@ def render_basket_management():
 
         with st.expander("Remove Symbol", expanded=True):
             active_symbols = get_active_symbols(basket)
-            symbol_to_remove = st.selectbox("Symbol", ["No options to select."] + active_symbols if not active_symbols else active_symbols, key="remove_symbol")
+            symbol_options = ["Select Symbol to Remove"] + active_symbols
+            symbol_to_remove = st.selectbox("Symbol", symbol_options, key="remove_symbol")
             remove_date = st.date_input("Date", value=basket['creation_date'].date(), min_value=basket['creation_date'].date(), key="remove_date")
             remove_time = st.time_input("Time", value=datetime.now().time(), key="remove_time")
             if st.button("Remove", type="primary"):
-                if symbol_to_remove and symbol_to_remove != "No options to select.":
+                if symbol_to_remove and symbol_to_remove != "Select Symbol to Remove":
                     remove_symbol(st.session_state.selected_basket, symbol_to_remove, datetime.combine(remove_date, remove_time))
                     st.session_state.refresh_key += 1
                 else:
-                    st.error("Select a symbol.")
+                    st.error("Select a symbol to remove.")
 
         # Download JSON button
         json_str = get_basket_json(st.session_state.selected_basket)

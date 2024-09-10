@@ -16,13 +16,18 @@ def render_basket_contents():
             # Convert dates to string format for display
             df['add_date'] = pd.to_datetime(df['add_date']).dt.strftime('%d-%b-%Y %H:%M:%S')
             df['remove_date'] = pd.to_datetime(df['remove_date']).dt.strftime('%d-%b-%Y %H:%M:%S')
-            df['remove_date'] = df['remove_date'].replace('NaT', '-')
+            df['remove_date'] = df['remove_date'].replace('NaT', 'nan')
             
-            # Create a copy of the dataframe for display
-            display_df = df.copy()
+            # Display table headers
+            cols = st.columns([2, 3, 3, 2, 1])
+            cols[0].write("**Symbol**")
+            cols[1].write("**Add Date**")
+            cols[2].write("**Remove Date**")
+            cols[3].write("**Status**")
+            cols[4].write("**Action**")
             
-            # Display the table
-            for index, row in display_df.iterrows():
+            # Display the table contents
+            for index, row in df.iterrows():
                 cols = st.columns([2, 3, 3, 2, 1])
                 cols[0].write(row['symbol'])
                 cols[1].write(row['add_date'])
