@@ -66,9 +66,6 @@ with st.sidebar:
 # Main content area
 st.title("Stocks Basket Manager")
 
-# Use the refresh key to force a rerun
-_ = st.empty().text(st.session_state.refresh_key)
-
 # Two-column layout with custom widths
 col1, col2 = st.columns([55, 45])
 

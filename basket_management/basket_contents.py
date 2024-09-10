@@ -1,10 +1,22 @@
 import streamlit as st
 import pandas as pd
-from basket_utils import get_basket_contents, delete_symbol
+from basket_utils import get_basket_contents, delete_symbol, get_basket_json
 
 def render_basket_contents():
     st.header("Basket Contents")
     if st.session_state.selected_basket:
+        # Add the download icon at the top right
+        col1, col2 = st.columns([3, 1])
+        with col2:
+            json_str = get_basket_json(st.session_state.selected_basket)
+            st.download_button(
+                label="📥",  # Download icon
+                data=json_str,
+                file_name=f"{st.session_state.selected_basket}_contents.json",
+                mime="application/json",
+                help="Download Basket as JSON"  # Tooltip text
+            )
+        
         df = get_basket_contents(st.session_state.selected_basket)
         if not df.empty:
             # Ensure all required columns are present
@@ -38,7 +50,6 @@ def render_basket_contents():
                     st.success(result)
                     st.session_state.refresh_key += 1  # Increment refresh key
                     st.rerun()
-            
         else:
             st.info("This basket is empty.")
     else:

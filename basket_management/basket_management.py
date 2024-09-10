@@ -1,6 +1,6 @@
 import streamlit as st
 from datetime import datetime
-from basket_utils import add_symbol, remove_symbol, get_basket_json, get_active_symbols
+from basket_utils import add_symbol, remove_symbol, get_active_symbols
 
 def render_basket_management():
     st.header("Basket Management")
@@ -35,14 +35,5 @@ def render_basket_management():
                     st.session_state.refresh_key += 1
                 else:
                     st.error("Select a symbol to remove.")
-
-        # Download JSON button
-        json_str = get_basket_json(st.session_state.selected_basket)
-        st.download_button(
-            label="Download as JSON",
-            data=json_str,
-            file_name=f"{st.session_state.selected_basket}_contents.json",
-            mime="application/json"
-        )
     else:
         st.info("Select a basket to manage symbols.")
