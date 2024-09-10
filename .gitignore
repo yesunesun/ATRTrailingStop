@@ -8,11 +8,6 @@
 /.vscode
 /.serverless
 
-.pyc
-__pycache__/. 
-/.pyc
-/.cpython*
-
 /.pnp
 .pnp.js
 

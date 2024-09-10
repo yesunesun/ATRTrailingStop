@@ -20,33 +20,20 @@ def render_basket_contents():
             
             # Create a copy of the dataframe for display
             display_df = df.copy()
-            display_df['action'] = 'Delete'
             
             # Display the table
-            st.table(display_df)
+            for index, row in display_df.iterrows():
+                cols = st.columns([2, 3, 3, 2, 1])
+                cols[0].write(row['symbol'])
+                cols[1].write(row['add_date'])
+                cols[2].write(row['remove_date'])
+                cols[3].write(row['status'])
+                if cols[4].button('🗑️', key=f"delete_{row['symbol']}", help="Delete"):
+                    result = delete_symbol(st.session_state.selected_basket, row['symbol'])
+                    st.success(result)
+                    st.session_state.refresh_key += 1  # Increment refresh key
+                    st.rerun()
             
-            # Handle delete actions
-            for index, row in df.iterrows():
-                col1, col2, col3 = st.columns([6, 1, 1])
-                with col3:
-                    if st.button('🗑️', key=f"delete_{row['symbol']}", help="Delete"):
-                        st.session_state[f"delete_confirmation_{row['symbol']}"] = True
-                        st.rerun()
-                
-                if st.session_state.get(f"delete_confirmation_{row['symbol']}", False):
-                    with col1:
-                        st.warning(f"Are you sure you want to delete {row['symbol']}?")
-                    with col2:
-                        if st.button('Yes', key=f"confirm_{row['symbol']}"):
-                            result = delete_symbol(st.session_state.selected_basket, row['symbol'])
-                            st.success(result)
-                            del st.session_state[f"delete_confirmation_{row['symbol']}"]
-                            st.session_state.refresh_key += 1  # Increment refresh key
-                            st.rerun()
-                    with col3:
-                        if st.button('No', key=f"cancel_{row['symbol']}"):
-                            del st.session_state[f"delete_confirmation_{row['symbol']}"]
-                            st.rerun()
         else:
             st.info("This basket is empty.")
     else:
