@@ -8,6 +8,11 @@
 /.vscode
 /.serverless
 
+.pyc
+__pycache__/. 
+/.pyc
+/.cpython*
+
 /.pnp
 .pnp.js
 
@@ -27,3 +32,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+basket_management/__pycache__/basket_contents.cpython-312.pyc
+basket_management/__pycache__/basket_management.cpython-312.pyc
+basket_management/__pycache__/basket_utils.cpython-312.pyc
