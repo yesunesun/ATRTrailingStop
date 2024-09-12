@@ -24,5 +24,13 @@ docker rm $(docker ps -a -q)
 docker stop <container_name_or_id>
 docker rm <container_name_or_id>
 
+# Remove director with folder/files
+sudo rm -r -f /path/
+
+#To delete all containers including its volumes use,
+docker rm -vf $(docker ps -aq)
+
+#To delete all the images,
+docker rmi -f $(docker images -aq)
 
 
