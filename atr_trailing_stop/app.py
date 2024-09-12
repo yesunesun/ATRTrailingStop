@@ -27,28 +27,28 @@ def yahoo_atr_trailing_stop(df, atr_length, atr_multiplier):
     
     for i in range(len(close)):
         if i == 0:
-            atr_stop[i] = close[i]
-            trend[i] = 1
+            atr_stop.iloc[i] = close.iloc[i]
+            trend.iloc[i] = 1
         else:
-            prev_trend = trend[i-1]
-            prev_atr_stop = atr_stop[i-1]
-            curr_close = close[i]
-            curr_atr = atr[i]
+            prev_trend = trend.iloc[i-1]
+            prev_atr_stop = atr_stop.iloc[i-1]
+            curr_close = close.iloc[i]
+            curr_atr = atr.iloc[i]
             
             if prev_trend == 1:
                 if curr_close > prev_atr_stop:
-                    atr_stop[i] = max(prev_atr_stop, curr_close - (atr_multiplier * curr_atr))
-                    trend[i] = 1
+                    atr_stop.iloc[i] = round(max(prev_atr_stop, curr_close - (atr_multiplier * curr_atr)), 2)
+                    trend.iloc[i] = 1
                 else:
-                    atr_stop[i] = curr_close + (atr_multiplier * curr_atr)
-                    trend[i] = -1
+                    atr_stop.iloc[i] = round(curr_close + (atr_multiplier * curr_atr), 2)
+                    trend.iloc[i] = -1
             else:  # prev_trend == -1
                 if curr_close < prev_atr_stop:
-                    atr_stop[i] = min(prev_atr_stop, curr_close + (atr_multiplier * curr_atr))
-                    trend[i] = -1
+                    atr_stop.iloc[i] = round(min(prev_atr_stop, curr_close + (atr_multiplier * curr_atr)), 2)
+                    trend.iloc[i] = -1
                 else:
-                    atr_stop[i] = curr_close - (atr_multiplier * curr_atr)
-                    trend[i] = 1
+                    atr_stop.iloc[i] = round(curr_close - (atr_multiplier * curr_atr), 2)
+                    trend.iloc[i] = 1
     
     return atr_stop
 
@@ -70,9 +70,11 @@ st.set_page_config(page_title="Yahoo ATR Trailing Stop Calculator", page_icon="ð
 st.title("Yahoo ATR Trailing Stop Loss")
 
 # Input from user
+period = 21
+multi = 3.0
 ticker = st.text_input("Enter the stock ticker", value='AAPL')
-multiplier = st.slider("Select ATR Multiplier", 1.0, 5.0, 3.0)
-length = st.slider("Select ATR Length", 5, 50, 14)
+multiplier = st.slider("Select ATR Multiplier", 1.0, 5.0, multi)
+length = st.slider("Select ATR Period", 5, 50, period)
 
 # Date range input
 start_date = st.date_input("Select start date", value=datetime(2024, 1, 1))
@@ -90,6 +92,11 @@ if ticker:
         st.subheader(f"{ticker} Yahoo ATR Trailing Stop Loss Chart")
         st.line_chart(data[['Close', 'Yahoo_ATR_Trailing_Stop']])
 
-        # Display the full data table
+        # Specify the date range (e.g., March 1st, 2024 to April 30th, 2024)
+        start_date = '2024-02-29'
+        end_date = '2024-04-10'
+
+        # Filter the data between the start and end dates
+        filtered_data = data.loc[start_date:end_date]
         st.subheader(f"{ticker} Stock Data with Yahoo ATR Trailing Stop Loss")
-        st.write(data[['Open', 'High', 'Low', 'Close', 'Yahoo_ATR_Trailing_Stop']])
+        st.write(filtered_data[['Open', 'High', 'Low', 'Close', 'Yahoo_ATR_Trailing_Stop']])
