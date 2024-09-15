@@ -1,5 +1,11 @@
 {
   "devDependencies": {
     "serverless-docker": "^0.0.5"
+  },
+  "dependencies": {
+    "alpha-vantage-cli": "^1.0.8",
+    "express": "^4.21.0",
+    "technicalindicators": "^3.1.0",
+    "yahoo-finance2": "^2.11.3"
   }
 }
