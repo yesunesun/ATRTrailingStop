@@ -4,5 +4,3 @@ matplotlib
 yfinance
 pandas
 numpy
-numba
-altair
